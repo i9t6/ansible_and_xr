@@ -1,0 +1,51 @@
+---
+- name: Automation XR - ICE
+  hosts: "{{ router_var }}"
+  connection: local
+  gather_facts: no
+  vars_files:
+    - ./external_vars.yml
+
+  tasks:
+    
+    - name: leer archivo
+      set_fact:
+        new_var: "{{ new_var | default([]) + [item] }}"
+      loop: "{{ lookup('file', '05-policy-map-changes.json') }}"
+      #no_log: true
+
+    - name: print
+      debug:
+        #msg: "{{ item.0.key }}  {{ item.1.0 | regex_findall('No policy-map') }}  {{ item.1.1 | regex_findall('[0-9]+Mbps-IN') }} }}"
+        msg: "{{ new_var }}"
+
+    - name: Respaldo policymap antes {{ bundle_var }}
+      cisco.iosxr.iosxr_command:
+        commands:
+        - sh policy-map targets | include "(Policy|Bundle)"
+        #- show interfaces bundle-ether {{ bundle_var }} | include tE
+      register: antes_var 
+
+    # Falta identificar caso que no tiene policy-map
+    - name: configure interface settings
+      cisco.iosxr.iosxr_config:
+        lines:
+        - no service-policy input {{ item.in_old }}
+        - service-policy input {{item.in_new }}
+        parents: interface {{ item.interface }}
+      loop: "{{ new_var}}"
+      no_log: true
+
+    - name: Respaldo policymap despues {{ bundle_var }}
+      cisco.iosxr.iosxr_command:
+        commands:
+        - sh policy-map targets | include "(Policy|Bundle)"
+        #- show interfaces bundle-ether {{ bundle_var }} | include tE
+      register: despues_var 
+
+    - name: print
+      debug:
+        #msg: "{{ item.0.key }}  {{ item.1.0 | regex_findall('No policy-map') }}  {{ item.1.1 | regex_findall('[0-9]+Mbps-IN') }} }}"
+        msg: 
+        - "{{ antes_var.stdout_lines }}"
+        - "{{ despues_var.stdout_lines }}"

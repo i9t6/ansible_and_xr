@@ -1,0 +1,16 @@
+---
+- name: Limpiar configuración del XRv
+  hosts: "{{ router_var }}"
+  connection: local
+  gather_facts: no
+  vars_files:
+    - ./external_vars.yml
+
+  tasks:
+    - name: Eliminando configuración
+      cisco.iosxr.iosxr_config:
+        src: "{{ item.file }}"
+      loop:
+        - file: 10-config-clean.conf
+        
+

@@ -1,0 +1,16 @@
+---
+- name: Configurar XRv
+  hosts: "{{ router_var }}"
+  connection: local
+  gather_facts: no
+  vars_files:
+    - ./external_vars.yml
+
+  tasks:
+    - name: Configuración de policy-maps, y bundle
+      cisco.iosxr.iosxr_config:
+        src: "{{ item.file }}"
+      loop:
+        - file: 01-config-policy-map.cfg
+        - file: 02-config-bundle.cfg
+

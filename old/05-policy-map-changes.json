@@ -1,0 +1,1 @@
+[{'interface': 'Bundle-Ether100.2026', 'out_old': 'tbd', 'in_old': '30Mbps-IN', 'out_new': 'tbd', 'in_new': '60Mbps-IN'}, {'interface': 'Bundle-Ether100.3026', 'out_old': 'tbd', 'in_old': '20Mbps-IN', 'out_new': 'tbd', 'in_new': '40Mbps-IN'}, {'interface': 'Bundle-Ether100.4026', 'out_old': 'tbd', 'in_old': '50Mbps-IN', 'out_new': 'tbd', 'in_new': '100Mbps-IN'}]

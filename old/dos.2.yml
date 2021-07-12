@@ -1,0 +1,58 @@
+---
+- name: Automation XR - ICE
+  hosts: "{{ router_var }}"
+  connection: local
+  gather_facts: no
+  vars_files:
+    - ./external_vars.yml
+
+  tasks:
+    
+    - name: Abrir archivo de cambios
+      set_fact:
+        new_var: "{{ lookup('file', '07-policy-map-changes-new.json') }}"
+      #no_log: true
+
+    - name: print
+      debug:
+        msg: item 
+      loop: "{{ new_var | dict2items }}"
+      
+
+    - name: Respaldo policymap antes {{ bundle_var }}
+      cisco.iosxr.iosxr_command:
+        commands:
+        - sh policy-map targets | include "(Policy|Bundle)"
+      register: antes_var 
+      
+    # Falta identificar caso que no tiene policy-map
+    - name: configure interface settings
+      cisco.iosxr.iosxr_config:
+        lines:
+        - no service-policy input {{ item.value.in_old }}
+        - service-policy input {{item.value.in_new }}
+        parents: interface {{ item.key }}
+      loop: "{{ new_var | dict2items }}"
+      no_log: true
+
+    - name: Respaldo policymap despues {{ bundle_var }}
+      cisco.iosxr.iosxr_command:
+        commands:
+        - sh policy-map targets | include "(Policy|Bundle)"
+        #- show interfaces bundle-ether {{ bundle_var }} | include tE
+      register: despues_var 
+
+    - name: print
+      debug:
+        msg: 
+        - "{{ antes_var.stdout_lines }}"
+        - "{{ despues_var.stdout_lines }}"
+    
+    - name: Creando configuración de nuevos policy_maps
+      demo_module_03:
+        var1: '{{ tabla_maps }}'
+      register: nuevos_policy_maps
+ 
+    - name: Policy map configuration
+      cisco.iosxr.iosxr_config:
+        src: "{{ nuevos_policy_maps.meta }}"

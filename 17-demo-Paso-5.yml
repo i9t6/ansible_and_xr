@@ -1,0 +1,47 @@
+---
+- name: Automation XR - ICE
+  hosts: "{{ router_var }}"
+  connection: local
+  gather_facts: no
+  vars_files:
+    - ./external_vars.yml
+
+  tasks:
+ 
+    - name: Abrir archivo de cambios
+      set_fact:
+        new_var: "{{ lookup('file', '08-policy-map-rollback-new.json') }}"
+      no_log: true
+
+    - name: Respaldo policy_map Bundle{{ bundle_var }} antes de cambio
+      cisco.iosxr.iosxr_command:
+        commands:
+        - sh policy-map targets | include "(Policy|Bundle)"
+      register: antes_var 
+
+    - name: Aplicar cambios en la configuración
+      cisco.iosxr.iosxr_config:
+        lines:
+        - no service-policy input {{ item.value.in_old }}
+        - service-policy input {{item.value.in_new }}
+        parents: interface {{ item.key }}
+      loop: "{{ new_var | dict2items }}"
+      no_log: true
+
+    - name: Respaldo policy_map Bundle{{ bundle_var }} despues del cambio
+      cisco.iosxr.iosxr_command:
+        commands:
+        - sh policy-map targets | include "(Policy|Bundle)"
+      register: despues_var
+
+    - name: Borrando policy_maps temporales
+      cisco.iosxr.iosxr_config:
+        lines:
+        - no policy-map {{ item.value }}
+      loop: "{{ tabla_maps | dict2items }}"
+
+    - name: print
+      debug:
+        msg: 
+        - "{{ antes_var.stdout_lines }}"
+        - "{{ despues_var.stdout_lines }}"

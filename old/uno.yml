@@ -1,0 +1,84 @@
+---
+- name: Automation XR - ICE
+  hosts: "{{ router_var }}"
+  connection: local
+  gather_facts: no
+  vars_files:
+    - ./external_vars.yml
+
+  tasks:
+    - name: Recopilando Informacion del Bundle {{ bundle_var }}
+      cisco.iosxr.iosxr_command:
+        commands:
+        - show ipv4 interface brief | include Ether{{ bundle_var }}
+        #- show interfaces bundle-ether {{ bundle_var }} | include tE
+      register: temp_var 
+      
+    - name: Servicios del bundle {{ bundle_var }} - Paso 1 / 2
+      set_fact:
+        list_servicios: "{{ list_servicios|default([]) + [item] }}"
+      loop: "{{ temp_var.stdout_lines[0] | regex_findall('Bundle-Ether[0-9]+\\.[0-9]+') }}"
+      #no_log: true
+
+    - name: Servicios del bundle {{ bundle_var }} - Paso 2 / 2
+      debug:
+        msg: 
+          - "{{ list_servicios }}"
+    
+ 
+    - name: Policy-Map Servicios del bundle {{ bundle_var }} - Paso 1 / 2
+      cisco.iosxr.iosxr_command:
+        commands:
+        - sh policy-map applied interface  {{ item }} | i "(IN|OUT)"
+      loop: "{{ list_servicios }}"
+      register: list_maps
+      #no_log: true
+    
+    - name: Policy-Map Servicios del bundle {{ bundle_var }} - Paso 2 / 2
+      set_fact:  
+        #list_interfaces_map_2: "{{ list_interfaces_map_2 | default([]) + [{ 'interface': item.item , 'out_old' : item.stdout | regex_search('No policy-map' ) , 'in_old': item.stdout | regex_search('[0-9]+Mbps-IN' ) , 'out_new' :'tbd', 'in_new' :'tbd' } ] }}"
+        list_interfaces_map_2: "{{ list_interfaces_map_2 | default([]) + [{ 'interface': item.item , 'out_old' : 'tbd' , 'in_old': item.stdout | regex_search('[0-9]+Mbps-IN' ) , 'out_new' :'tbd', 'in_new' :'tbd' } ] }}"
+      loop: "{{ list_maps.results }}"
+      #no_log: true
+    
+    - debug:
+        msg: item
+      loop: "{{ tabla_maps | dict2items }}"
+
+    - name: Json con informacion de Servicios del bundle {{ bundle_var }} - Paso 1 / 2
+      set_fact:  
+        list_interfaces_map: "{{ list_interfaces_map | default([]) + [{ 'interface': item.interface , 'out_old' : item.out_old , 'in_old': item.in_old , 'out_new' :  tabla_maps[ item.out_old ] , 'in_new' : tabla_maps[ item.in_old ]  } ] }}"
+      loop: "{{ list_interfaces_map_2 }}"
+      #no_log: true
+
+    - name: Json con informacion de rollback del bundle {{ bundle_var }} - Paso 2 / 2
+      set_fact:  
+        list_rollback_map: "{{ list_rollback_map | default([]) + [{ 'interface': item.interface , 'out_old' : item.out_new , 'in_old': item.in_new , 'out_new' : item.out_old, 'in_new' : item.in_old } ] }}"
+      loop: "{{ list_interfaces_map }}"
+      #no_log: true
+
+    - name: Creating a file with content
+      file: state=touch path=./{{ item }}.json
+      loop:
+        - "05-policy-map-changes"
+        - "06-policy-map-rollback"
+
+    - name: Writing a file with content
+      lineinfile: line="{{ item.record }}" dest=./{{ item.file }}.json
+      loop:
+        - file: "05-policy-map-changes"
+          record: "{{ list_interfaces_map }}"
+        - file: "06-policy-map-rollback"
+          record: "{{ list_rollback_map }}"
+      no_log: true
+
+
+    - name: Informacion recopilada
+      debug:
+        msg: 
+        - -------- Antes ----------
+        - -------------------------
+        - "{{ list_interfaces_map }}"
+        - -------- Rollback -------
+        - -------------------------
+        - "{{ list_rollback_map }}"

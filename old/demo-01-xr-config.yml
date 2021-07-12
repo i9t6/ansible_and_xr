@@ -1,0 +1,21 @@
+---
+- name: Configurar XRv
+  hosts: "{{ router_var }}"
+  connection: local
+  gather_facts: no
+  vars_files:
+    - ./external_vars.yml
+
+  tasks:
+    - name: Policy map configuration
+      cisco.iosxr.iosxr_config:
+        src: 03-config-aditional.cfg
+
+    - name: configure interface settings
+      cisco.iosxr.iosxr_config:
+        lines:
+        - description ***** LAGAR_17000004_INT *****
+        - service-policy input 50Mbps-IN
+        - ipv4 address 10.4.0.1 255.255.255.248
+        - encapsulation dot1q 4026
+        parents: interface Bundle-Ether100.4026
