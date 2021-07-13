@@ -58,7 +58,7 @@
           record: "{{ final_var.meta }}"
         - file: "08-policy-map-rollback-new"
           record: "{{ final_var_rollback.meta }}"
-      no_log: true
+      #no_log: true
 
     - name: Informacion recopilada
       debug:
