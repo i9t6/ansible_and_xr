@@ -11,6 +11,6 @@
       cisco.iosxr.iosxr_config:
         src: "{{ item.file }}"
       loop:
-        - file: 10-config-clean.conf
+        - file: 10-config-clean.cfg
         
 
