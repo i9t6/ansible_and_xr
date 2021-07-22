@@ -16,7 +16,7 @@
     - name: Subinterfaces del bundle {{ bundle_var }}
       set_fact:
         list_servicios: "{{ list_servicios|default([]) + [item] }}"
-      loop: "{{ temp_var1.stdout_lines[0] | regex_findall('Bundle-Ether[\.0-9]+') }}"
+      loop: "{{ temp_var1.stdout_lines[0] | regex_findall('Bundle-Ether[\\.0-9]+') }}"
       #no_log: true
     
     - name: Policy-map en las subinterfaces del bundle {{ bundle_var }}
