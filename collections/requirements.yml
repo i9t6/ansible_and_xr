@@ -1,5 +1,4 @@
 ---
 collections:
   - cisco.iosxr
-  - cisco.iosxr.iosxr_config
   - community.general
