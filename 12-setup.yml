@@ -8,7 +8,7 @@
 
   tasks:
     - name: Configuración de policy-maps, y bundle
-      cisco.iosxr.iosxr_config:
+      iosxr_config:
         src: "{{ item.file }}"
       loop:
         - file: 01-config-policy-map.cfg
