@@ -52,7 +52,7 @@
         - "08-policy-map-rollback-new"
 
     - name: Guardando información de respaldo
-      lineinfile: line="{{ item.record }}" dest=./{{ item.file }}.json
+      lineinfile: line="{{ item.record }}" dest=/var/lib/awx/projects/{{ item.file }}.json
       loop:
         - file: "07-policy-map-changes-new"
           record: "{{ final_var.meta }}"
