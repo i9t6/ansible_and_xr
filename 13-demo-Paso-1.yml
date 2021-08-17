@@ -46,7 +46,7 @@
       register: final_var_rollback
 
     - name: Creando archivos de respaldo
-      file: state=touch path=./{{ item }}.json
+      file: state=touch path=/var/lib/awx/projects/{{ item }}.json
       loop:
         - "07-policy-map-changes-new"
         - "08-policy-map-rollback-new"
