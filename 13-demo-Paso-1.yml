@@ -46,7 +46,7 @@
       register: final_var_rollback
     
     - name: Create alert rule containing directory
-      become: tru
+      become: true
       file:
         path: /var/lib/awx/temp
         state: directory
