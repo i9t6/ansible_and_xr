@@ -18,7 +18,7 @@
 
     - name: Abrir archivo de cambios
       set_fact:
-        new_var: "{{ lookup('file', './07-policy-map-changes-new.json') }}"
+        new_var: "{{ lookup('file', '/tmp/07-policy-map-changes-new.json') }}"
       #no_log: true
 
     - name: Respaldo policy_map Bundle{{ bundle_var }} antes de cambio
