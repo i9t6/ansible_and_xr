@@ -45,11 +45,11 @@
         var1: '{{ final_var.meta }}'
       register: final_var_rollback
     
-    #- name: Create alert rule containing directory
+    - name: Create alert rule containing directory
     #  become: yes
-    #  file:
-    #    path: /var/lib/awx/projects/temp2
-    #    state: directory
+      file:
+        path: /tmp/test
+        state: directory
 
     - name: Creando archivos de respaldo
       file: state=touch path=/tmp/test/{{ item }}.json
