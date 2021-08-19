@@ -45,14 +45,14 @@
         var1: '{{ final_var.meta }}'
       register: final_var_rollback
     
-    #- name: Create alert rule containing directory
+    - name: Create alert rule containing directory
     #  become: yes
-    #  file:
-    #    path: /var/lib/awx/temp2
-    #    state: directory
+      file:
+        path: /var/lib/awx/projects/temp2
+        state: directory
 
     - name: Creando archivos de respaldo
-      file: state=touch path=/var/lib/awx/project/temp/{{ item }}.json
+      file: state=touch path=/var/lib/awx/project/temp2/{{ item }}.json
       loop:
         - "07-policy-map-changes-new"
         - "08-policy-map-rollback-new"
@@ -65,7 +65,7 @@
       #  - "08-policy-map-rollback-new"
 
     - name: Guardando información de respaldo
-      lineinfile: line="{{ item.record }}" dest=/var/lib/awx/project/temp/{{ item.file }}.json
+      lineinfile: line="{{ item.record }}" dest=/var/lib/awx/project/temp2/{{ item.file }}.json
       loop:
         - file: "07-policy-map-changes-new"
           record: "{{ final_var.meta }}"
