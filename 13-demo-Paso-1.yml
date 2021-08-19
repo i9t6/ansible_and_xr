@@ -57,9 +57,9 @@
     #    - "07-policy-map-changes-new"
     #    - "08-policy-map-rollback-new"
     - name: Create file
-      command: "touch /var/lib/awx/temp/{{ item }}.json"
+      command: touch /var/lib/awx/temp/{{ item }}.json
         args:
-          creates: "/var/lib/awx/temp/{{ item }}.json"
+          creates: /var/lib/awx/temp/{{ item }}.json
       loop:
         - "07-policy-map-changes-new"
         - "08-policy-map-rollback-new"
