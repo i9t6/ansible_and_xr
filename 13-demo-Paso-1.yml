@@ -57,12 +57,12 @@
     #    - "07-policy-map-changes-new"
     #    - "08-policy-map-rollback-new"
     - name: Create file
-      command: touch /var/lib/awx/temp/{{ item }}.json
+      command: touch /var/lib/awx/temp/test.json
         args:
-          creates: /var/lib/awx/temp/{{ item }}.json
-      loop:
-        - "07-policy-map-changes-new"
-        - "08-policy-map-rollback-new"
+          creates: /var/lib/awx/temp/test.json
+      #loop:
+      #  - "07-policy-map-changes-new"
+      #  - "08-policy-map-rollback-new"
 
     - name: Guardando información de respaldo
       lineinfile: line="{{ item.record }}" dest=/var/lib/awx/temp2/{{ item.file }}.json
