@@ -56,10 +56,10 @@
     #  loop:
     #    - "07-policy-map-changes-new"
     #    - "08-policy-map-rollback-new"
-    - name: Create file
-      command: touch /var/lib/awx/temp/test.json
-        args:
-          creates: /var/lib/awx/temp/test.json
+    #- name: Create file
+    #  command: touch /var/lib/awx/temp/test.json
+    #    args:
+    #      creates: /var/lib/awx/temp/test.json
       #loop:
       #  - "07-policy-map-changes-new"
       #  - "08-policy-map-rollback-new"
