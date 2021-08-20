@@ -52,7 +52,7 @@
     #    state: directory
 
     - name: Creando archivos de respaldo
-      file: state=touch path=/runner/{{ item }}.json
+      file: state=touch path=/runner/tmp{{ item }}.json
       loop:
         - "07-policy-map-changes-new"
         - "08-policy-map-rollback-new"
@@ -65,7 +65,7 @@
       #  - "08-policy-map-rollback-new"
 
     - name: Guardando información de respaldo
-      lineinfile: line="{{ item.record }}" dest=/runner/{{ item.file }}.json
+      lineinfile: line="{{ item.record }}" dest=/runner/tmp{{ item.file }}.json
       loop:
         - file: "07-policy-map-changes-new"
           record: "{{ final_var.meta }}"
