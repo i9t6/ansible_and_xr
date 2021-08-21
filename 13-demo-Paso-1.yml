@@ -51,9 +51,9 @@
     #    path: /tmp/test
     #    state: directory
 
-    - name: pausa
-      pause:
-        minutes: 2
+    #- name: pausa
+    #  pause:
+    #    minutes: 2
         
     - name: Creando archivos de respaldo
       file: state=touch path=/fqc/{{ item }}.json
