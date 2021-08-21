@@ -1,0 +1,41 @@
+---
+- name: Automation XR - ICE
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  vars_files:
+    - ./external_vars.yml
+
+
+
+    - name: Creando archivos de respaldo
+      file: state=touch path=/fqc/{{ item }}.json
+      loop:
+        - "07-policy-map-changes-new"
+        - "08-policy-map-rollback-new"
+    #- name: Create file
+    #  command: touch /var/lib/awx/temp/test.json
+    #    args:
+    #      creates: /var/lib/awx/temp/test.json
+      #loop:
+      #  - "07-policy-map-changes-new"
+      #  - "08-policy-map-rollback-new"
+
+    - name: Guardando información de respaldo
+      lineinfile: line="{{ item.record }}" dest=/fqc/{{ item.file }}.json
+      loop:
+        - file: "07-policy-map-changes-new"
+          record: "{{ final_var.meta }}"
+        - file: "08-policy-map-rollback-new"
+          record: "{{ final_var_rollback.meta }}"
+      #no_log: true
+
+    - name: Informacion recopilada
+      debug:
+        msg: 
+        - -------- Antes ----------
+        - -------------------------
+        - "{{ final_var.meta }}"
+        - -------- Rollback -------
+        - -------------------------
+        - "{{ final_var_rollback.meta }}"
