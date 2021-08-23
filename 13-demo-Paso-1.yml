@@ -51,22 +51,15 @@
     #    path: /tmp/test
     #    state: directory
 
-    - name: pausa
-      pause:
-        minutes: 2
+    #- name: pausa
+    #  pause:
+    #    minutes: 2
         
-    - name: Creando archivos de respaldo
+    - name: Create file
       file: state=touch path=/fqc/{{ item }}.json
       loop:
         - "07-policy-map-changes-new"
         - "08-policy-map-rollback-new"
-    #- name: Create file
-    #  command: touch /var/lib/awx/temp/test.json
-    #    args:
-    #      creates: /var/lib/awx/temp/test.json
-      #loop:
-      #  - "07-policy-map-changes-new"
-      #  - "08-policy-map-rollback-new"
 
     - name: Guardando información de respaldo
       lineinfile: line="{{ item.record }}" dest=/fqc/{{ item.file }}.json
