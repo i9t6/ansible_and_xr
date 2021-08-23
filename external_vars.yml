@@ -4,7 +4,8 @@
    bundle_var: 100
    tabla_maps: { '20Mbps-IN' : '40Mbps-IN',
                  '30Mbps-IN' : '60Mbps-IN',
-                 '50Mbps-IN' : '100Mbps-IN'
+                 '50Mbps-IN' : '100Mbps-IN',
+                 'tbd':'tbd'
                  }
    elementos_var: [ 'GigabitEthernet0/0/0/3', 'GigabitEthernet0/0/0/4']
 
