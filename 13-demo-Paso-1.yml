@@ -45,21 +45,11 @@
         var1: '{{ final_var.meta }}'
       register: final_var_rollback
     
-    #- name: Create alert rule containing directory
-    #  become: yes
-    #  file:
-    #    path: /tmp/test
-    #    state: directory
-
-    #- name: pausa
-    #  pause:
-    #    minutes: 2
-        
-    - name: Create file
+    - name: Creando archivos de respaldo
       file: state=touch path=/fqc/{{ item }}.json
       loop:
-        - "07-policy-map-changes-new"
-        - "08-policy-map-rollback-new"
+        - '{{ file_changes_json }}'
+        - '{{ file_rollback_json }}'
 
     - name: Guardando información de respaldo
       lineinfile: line="{{ item.record }}" dest=/fqc/{{ item.file }}.json
